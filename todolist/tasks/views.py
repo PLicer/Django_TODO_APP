@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404,redirect
 from django.http import JsonResponse
 from django.template.context_processors import request
@@ -230,3 +231,39 @@ def subtask_list(request,pk):
         for subtask in subtasks
     ]
     return JsonResponse(subtasks_data,safe=False)
+
+@csrf_exempt
+@login_required
+def share_task(request,task_id,recipient_user_id):
+    if request.method=='POST':
+        recipient=get_object_or_404(User,id=recipient_user_id)
+        task=get_object_or_404(Task,id=task_id,user=request.user)
+        task.is_shared=True
+        task.shared_with.add(recipient)
+        task.save()
+        return JsonResponse({'message':'Task shared successfully'},status=200)
+
+    return JsonResponse({'error':'Invalid request'},status=400)
+
+@csrf_exempt
+@login_required
+def view_shared_tasks(request):
+    shared_tasks= request.user.shared_tasks.all()
+    shared_task_list=[
+        {
+            'id':task.id,
+            'title':task.title,
+            'description':task.description,
+            'created_at':task.created_at,
+            'updated_at':task.updated_at,
+            'shared_by':task.user.username
+        }
+        for task in shared_tasks
+    ]
+
+    return JsonResponse({'shared_tasks':shared_task_list},status=200)
+
+
+
+
+

@@ -8,6 +8,8 @@ class Task(models.Model):
     description=models.TextField(blank=True,null=True)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
+    is_shared = models.BooleanField(default=False)
+    shared_with = models.ManyToManyField(User,related_name='shared_tasks',blank=True)
 
     def __str__(self):
         return self.title

@@ -15,5 +15,7 @@ urlpatterns=[
     path('tasks/<int:pk>/subtasks/get/',views.subtask_list,name='subtask_list'),
     path('register/',views.register,name='register'),
     path('login/',views.login_user,name='login'),
-    path('logout/',views.logout_user,name='logout')
+    path('logout/',views.logout_user,name='logout'),
+    path('tasks/share/<int:task_id>/<int:recipient_user_id>/',views.share_task,name='share_task'),
+    path('tasks/shared/',views.view_shared_tasks,name='view_shared_tasks')
 ]
